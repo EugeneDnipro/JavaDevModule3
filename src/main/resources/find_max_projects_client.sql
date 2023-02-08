@@ -1,0 +1,1 @@
+SELECT name, salary FROM client WHERE (salary = SELECT MAX(salary) FROM worker)

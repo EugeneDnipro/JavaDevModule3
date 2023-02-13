@@ -24,3 +24,18 @@ SELECT name, count(name) AS project_count
         JOIN project ON client.id = project.client_id)
     GROUP BY name
     HAVING project_count = SELECT (MAX (project_count))
+
+SELECT *
+    FROM (SELECT name, count(name) AS project_count
+        FROM (SELECT name, project.client_id
+            FROM client
+            JOIN project
+            ON client.id = project.client_id)
+        GROUP BY name)
+    WHERE project_count = (SELECT MAX(project_count)
+        FROM (SELECT name, count(name) AS project_count
+            FROM (SELECT name, project.client_id
+                FROM client
+                JOIN project
+                ON client.id = project.client_id)
+            GROUP BY name))

@@ -1,10 +1,19 @@
 CREATE TABLE youngest_eldest_workers(
 	type VARCHAR PRIMARY KEY,
-	name VARCHAR NOT NULL,
+	name VARCHAR,
 	birthday DATE,
-	level VARCHAR NOT NULL,
-	salary INTEGER
 );
-ALTER TABLE worker ADD CONSTRAINT check_worker_name CHECK(LENGTH(name) >= 2 AND LENGTH(name) <= 1000);
 
-CREATE TABLE youngest_eldest_workers SELECT * FROM `student` WHERE mark=(select max(mark) from student)
+ALTER TABLE youngest_eldest_workers ADD CONSTRAINT check_youngest_eldest_workers_type CHECK(type IN ('YOUNGEST', 'ELDEST'));
+
+INSERT INTO youngest_eldest_workers (type, name, birthday)
+    VALUES ('YOUNGEST',
+        (SELECT name FROM worker WHERE birthday=(SELECT MAX(birthday) FROM worker)),
+        (SELECT birthday FROM worker WHERE birthday=(SELECT MAX(birthday) FROM worker)));
+
+INSERT INTO youngest_eldest_workers (type, name, birthday)
+    VALUES ('ELDEST',
+        (SELECT name FROM worker WHERE birthday=(SELECT MIN(birthday) FROM worker)),
+        (SELECT birthday FROM worker WHERE birthday=(SELECT MIN(birthday) FROM worker)));
+
+SELECT * FROM youngest_eldest_workers;
